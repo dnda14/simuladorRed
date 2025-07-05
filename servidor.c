@@ -5,11 +5,32 @@
 
 #define PORT 8080
 
+DWORD WINAPI ClientHandler(LPVOID lpParam) {
+    SOCKET client = (SOCKET)lpParam;
+    char buffer[1024];
+    int bytes;
+
+    // Configurar timeout de recepción (30 segundos)
+    int timeout = 30000;
+    setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+
+    while((bytes = recv(client, buffer, sizeof(buffer), 0)) > 0) {
+        buffer[bytes] = '\0';
+        printf("Mensaje recibido: %s", buffer);
+        send(client, buffer, bytes, 0);
+    }
+
+    printf("Cliente desconectado\n");
+    closesocket(client);
+    return 0;
+}
+
 int main()
 {
     printf("\t\t-------------- TCP SERVER --------------\n");
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
+
     int server_fd, cliente_socket;
     struct sockaddr_in direccion;
     int addrsz = sizeof(direccion);
@@ -25,6 +46,11 @@ int main()
     direccion.sin_addr.s_addr = INADDR_ANY; // escucha cualquier IP
     direccion.sin_port = htons(PORT);       // puerto en el que escucha
 
+    int si=1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&si, sizeof(si)); // Permite reutilizar el puerto
+
+
+
     if (bind(server_fd, (struct sockaddr *)&direccion, addrsz) < 0)
     {
         perror("Error en el bind");
@@ -36,7 +62,18 @@ int main()
         perror("Error en el listen");
         exit(EXIT_FAILURE);
     }
+
     printf("escuchando puerti %d\n", PORT);
+
+    while(1) {
+        SOCKET client = accept(server_fd, NULL, NULL);
+        if(client == INVALID_SOCKET) {
+            printf("Error en accept: %d\n", WSAGetLastError());
+            continue;
+        }
+
+        CreateThread(NULL, 0, ClientHandler, (LPVOID)client, 0, NULL);
+    }
     if ((cliente_socket = accept(server_fd, (struct sockaddr *)&direccion, &addrsz)) < 0)
     {
         perror("Error en el accept");
@@ -45,6 +82,7 @@ int main()
     while (1)
     {
         int bytes_recibidos = recv(cliente_socket, buffer, sizeof(buffer), 0);
+
         if (bytes_recibidos <= 0)
         {
             break;
