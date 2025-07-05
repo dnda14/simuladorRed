@@ -11,7 +11,7 @@ int main()
     printf("\t\t-------------- TCP CLIENT --------------\n");
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
-    
+
     int cliente_socket;
     struct sockaddr_in serv_direccion;
     char buffer[1024] = {0};
@@ -45,6 +45,9 @@ int main()
         recv(cliente_socket, buffer, sizeof(buffer), 0);
         printf("Eco: %s\n", buffer);
     }
+    shutdown(cliente_socket, SD_SEND); // Indica que no se enviaran mas datos
+    recv(cliente_socket, buffer, sizeof(buffer), 0); // Espera a recibir el eco final
+
     closesocket(cliente_socket);
     return 0;
     
