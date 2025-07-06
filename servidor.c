@@ -2,26 +2,68 @@
 #include <stdlib.h>
 #include <string.h>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 
 #define PORT 8080
 
-DWORD WINAPI ClientHandler(LPVOID lpParam) {
-    SOCKET client = (SOCKET)lpParam;
+DWORD WINAPI ClientHandler(LPVOID lpParam)
+{
+    SOCKET cliente_socket = (SOCKET)lpParam;
     char buffer[1024];
     int bytes;
 
     // Configurar timeout de recepción (30 segundos)
     int timeout = 30000;
-    setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+    setsockopt(cliente_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
 
-    while((bytes = recv(client, buffer, sizeof(buffer), 0)) > 0) {
-        buffer[bytes] = '\0';
-        printf("Mensaje recibido: %s", buffer);
-        send(client, buffer, bytes, 0);
+    printf("clientee conectado: %d\n", cliente_socket);
+
+    while (1)
+    {
+
+        bytes = recv(cliente_socket, buffer, sizeof(buffer), 0);
+        if (bytes > 0)
+        {
+            /* code */
+            buffer[bytes] = '\0';
+            printf("Mensaje recibido de %d: %s", cliente_socket, buffer);
+            if (buffer[strlen(buffer) - 1] == '\n')
+            {
+                buffer[strlen(buffer) - 1] = '\0';
+            }
+
+            // Comando para cerrar conexión
+            if (strcmp(buffer, "exit") == 0)
+            {
+                printf("Cliente %d solicitó cierre\n", cliente_socket);
+                break;
+            }
+
+            // Responder eco
+            if (send(cliente_socket, buffer, bytes, 0) == SOCKET_ERROR)
+            {
+                printf("Error al responder al cliente %d: %d\n", cliente_socket, WSAGetLastError());
+                break;
+            }
+        }
+
+        else
+        {
+            int error = WSAGetLastError();
+            if (error == WSAETIMEDOUT)
+            {
+                printf("Timeout con cliente %d\n", cliente_socket);
+            }
+            else
+            {
+                printf("Cliente %d desconectado (Error: %d)\n", cliente_socket, error);
+            }
+            break;
+        }
     }
 
-    printf("Cliente desconectado\n");
-    closesocket(client);
+    printf("clientee desconectado\n");
+    closesocket(cliente_socket);
     return 0;
 }
 
@@ -40,16 +82,14 @@ int main()
     {
         perror("Error en creacion de socket");
         exit(EXIT_FAILURE);
-    }   
+    }
 
     direccion.sin_family = AF_INET;
     direccion.sin_addr.s_addr = INADDR_ANY; // escucha cualquier IP
     direccion.sin_port = htons(PORT);       // puerto en el que escucha
 
-    int si=1;
+    int si = 1;
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&si, sizeof(si)); // Permite reutilizar el puerto
-
-
 
     if (bind(server_fd, (struct sockaddr *)&direccion, addrsz) < 0)
     {
@@ -65,36 +105,22 @@ int main()
 
     printf("escuchando puerti %d\n", PORT);
 
-    while(1) {
+    while (1)
+    {
         SOCKET client = accept(server_fd, NULL, NULL);
-        if(client == INVALID_SOCKET) {
+        if (client == INVALID_SOCKET)
+        {
             printf("Error en accept: %d\n", WSAGetLastError());
             continue;
         }
 
         CreateThread(NULL, 0, ClientHandler, (LPVOID)client, 0, NULL);
     }
-    if ((cliente_socket = accept(server_fd, (struct sockaddr *)&direccion, &addrsz)) < 0)
-    {
-        perror("Error en el accept");
-        exit(EXIT_FAILURE);
-    }
-    while (1)
-    {
-        int bytes_recibidos = recv(cliente_socket, buffer, sizeof(buffer), 0);
+    
 
-        if (bytes_recibidos <= 0)
-        {
-            break;
-        }
-        printf("mesaje recibido: %s\n", buffer);
-        send(cliente_socket, buffer, bytes_recibidos, 0);
-        memset(buffer, 0, sizeof(buffer));
-    }
-
-    closesocket(cliente_socket);
+    printf("Cerrando servidor...\n");
     closesocket(server_fd);
+    WSACleanup();
 
     return 0;
-
 }

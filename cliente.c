@@ -5,6 +5,40 @@
 #include <ws2tcpip.h>
 
 #define PORT 8080
+#define MAX_RETRIES 5
+#define RETRY_DELAY 3 
+
+int connect_to_server(int *sock) {
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
+    
+    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+        printf("Dirección inválida\n");
+        return -1;
+    }
+
+    for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        *sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (*sock == INVALID_SOCKET) {
+            printf("Error creando socket: %d\n", WSAGetLastError());
+            return -1;
+        }
+
+        if (connect(*sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == 0) {
+            printf("¡Conectado al servidor!\n");
+            return 0; // Éxito
+        }
+
+        printf("Intento %d/%d fallido. Reintentando en %d segundos...\n", 
+               attempt, MAX_RETRIES, RETRY_DELAY);
+        closesocket(*sock);
+        Sleep(RETRY_DELAY);
+    }
+
+    printf("No se pudo conectar después de %d intentos\n", MAX_RETRIES);
+    return -1;
+}
 
 int main()
 {
@@ -15,40 +49,45 @@ int main()
     int cliente_socket;
     struct sockaddr_in serv_direccion;
     char buffer[1024] = {0};
-
-    if ((cliente_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
-    {
-        perror("Error en creacion de socket");
-        exit(EXIT_FAILURE);
-    }
-
-    serv_direccion.sin_family = AF_INET;
-    serv_direccion.sin_port = htons(PORT); // puerto al que se conecta
-
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_direccion.sin_addr) <= 0) // IP del servidor
-    {
-        perror("direccion invalida");
-        exit(EXIT_FAILURE);
-    }
-    if (connect(cliente_socket,(struct sockaddr *)&serv_direccion, sizeof(serv_direccion)) < 0)
-    {
-        perror("Error en el connect");
-        exit(EXIT_FAILURE);
-    }
-    printf("Conectado al servidor en el puerto %d, escribe mensajes:\n", PORT);
-
     while (1)
     {
-        printf("> ");
-        fgets(buffer, sizeof(buffer), stdin);
-        send(cliente_socket,buffer,strlen(buffer),0);
-        recv(cliente_socket, buffer, sizeof(buffer), 0);
-        printf("Eco: %s\n", buffer);
-    }
-    shutdown(cliente_socket, SD_SEND); // Indica que no se enviaran mas datos
-    recv(cliente_socket, buffer, sizeof(buffer), 0); // Espera a recibir el eco final
+        if (connect_to_server(&cliente_socket) == 0)
+        {
+            while (1)
+            {
+                printf("> ");
+                fgets(buffer, sizeof(buffer), stdin);
 
-    closesocket(cliente_socket);
+                if (send(cliente_socket,buffer,strlen(buffer),0)<=0)
+                {
+                    printf("Error al enviar datos al servidor (REconectando...): %d\n", WSAGetLastError());
+                    closesocket(cliente_socket);
+                    break; // Salir del bucle si hay error
+                }
+                
+                
+                int bytes = recv(cliente_socket, buffer, sizeof(buffer), 0);
+                if (bytes <=0)
+                {
+                    printf("Error al recibir datos del servidor (REconectando...): %d\n", WSAGetLastError());
+                    closesocket(cliente_socket);
+                    break; // Salir del bucle si hay error
+                }
+                buffer[bytes] = '\0'; // Asegurarse de que el buffer es una cadena
+                printf("Eco: %s\n", buffer);
+            }
+           
+    
+        }
+        else
+        {
+            printf("No se pudo conectar al servidor.Reinciando...\n");
+            Sleep(RETRY_DELAY * 1000); // Espera antes de reintentar
+        }
+        
+    }
+    
+    WSACleanup();
     return 0;
     
 
