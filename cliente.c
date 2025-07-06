@@ -9,6 +9,8 @@
 #define RETRY_DELAY 3 
 
 int connect_to_server(int *sock) {
+    FILE *log = fopen("client.log", "a");
+    
     struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
@@ -32,11 +34,13 @@ int connect_to_server(int *sock) {
 
         printf("Intento %d/%d fallido. Reintentando en %d segundos...\n", 
                attempt, MAX_RETRIES, RETRY_DELAY);
+        fprintf(log, "[%s] Intento de conexión fallido\n", get_current_time());
         closesocket(*sock);
         Sleep(RETRY_DELAY);
     }
 
     printf("No se pudo conectar después de %d intentos\n", MAX_RETRIES);
+    fprintf(log, "[%s] Intento de conexión fallido\n", get_current_time());
     return -1;
 }
 

@@ -81,6 +81,7 @@ int main()
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
     {
         perror("Error en creacion de socket");
+        
         exit(EXIT_FAILURE);
     }
 
@@ -100,6 +101,7 @@ int main()
     if (listen(server_fd, 3) < 0)
     {
         perror("Error en el listen");
+        
         exit(EXIT_FAILURE);
     }
 
