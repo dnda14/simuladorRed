@@ -1,0 +1,10 @@
+{
+    "nodos": ["Router A", "Router B", "Switch C", "Servidor D"],
+    "enlaces": [
+        {"origen": "Router A", "destino": "Switch C", "tipo": "Ethernet","retardo": 10, "perdida": 0.1},
+        {"origen": "Switch C", "destino": "Servidor D", "tipo": "Ethernet", "retardo": 2, "perdida": 0.05},
+        {"origen": "Router A", "destino": "Router B", "tipo": "Serial", "retardo": 20, "perdida": 0.2},
+        {"origen": "Router B", "destino": "Servidor D", "tipo": "Ethernet", "retardo": 5, "perdida": 0.01}
+        
+    ]
+}
