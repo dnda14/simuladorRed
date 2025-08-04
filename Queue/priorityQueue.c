@@ -9,7 +9,7 @@ struct PriorityQueue
     int capacity;
 };
 
-struct priorityQueue *create_pq(int capacity)
+struct PriorityQueue *create_pq(int capacity)
 {
     struct PriorityQueue *pq = malloc(sizeof(struct PriorityQueue));
     pq->array = malloc(capacity * sizeof(int));
@@ -53,21 +53,59 @@ int get_max(struct PriorityQueue *pq)
     }
 }
 
-void heapify_up(struct PriorityQueue *pq)
+void heapify_up(struct PriorityQueue *pq, int index)
 {
-   /*  
-    - The parent of a node at index `i` is at index `(i - 1) / 2`.
-    - The children of a node at index `i` are at indices `2 * i + 1` and `2 * i + 2`. 
-    */
-   if (pq->size == 2)
-   {
-        if(pq->array[0]<pq->array[1])
-    {
-        
-    }
-   }else if(pq->size>2)
-   {
+    /*
+     - The parent of a node at index `i` is at index `(i - 1) / 2`.
+     */
 
-   }
-   
+    int indexCurrent = (index - 1) / 2;
+    while (index > 0)
+    {
+        if (pq->array[indexCurrent] >= pq->array[index])
+        {
+            printf("Heapify ended\n");
+            return;
+        }
+        else
+        {
+            int aux = pq->array[indexCurrent];
+            pq->array[indexCurrent] = pq->array[index];
+            pq->array[index] = aux;
+            index = indexCurrent;
+            indexCurrent = (index - 1) / 2;
+        }
+    }
+}
+void heapify_down(struct PriorityQueue *pq, int index)
+{
+    /*
+     - The children of a node at index `i` are at indices `2 * i + 1` and `2 * i + 2`.
+     */
+
+     
+}
+
+int main() {
+    // Create a priority queue and simulate an insertion
+    int heap_array[5] = {20, 15, 10, 5, 18};
+    struct PriorityQueue pq = {heap_array, 5, 5};
+    int new_element_index = 4; // We just inserted '18' at index 4
+
+    printf("Array before heapify_up: ");
+    for (int i = 0; i < pq.size; i++) {
+        printf("%d ", pq.array[i]);
+    }
+    printf("\n");
+
+    // Call the correct heapify_up function
+    heapify_up(&pq, new_element_index);
+
+    printf("Array after heapify_up: ");
+    for (int i = 0; i < pq.size; i++) {
+        printf("%d ", pq.array[i]);
+    }
+    printf("\n");
+
+    return 0;
 }
