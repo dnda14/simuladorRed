@@ -2,12 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct PriorityQueue
-{
-    int *array;
-    int size;
-    int capacity;
-};
+#include <Queue/priorityQueue.h>
+
 
 struct PriorityQueue *create_pq(int capacity)
 {
@@ -77,13 +73,17 @@ void heapify_up(struct PriorityQueue *pq, int index)
         }
     }
 }
-void heapify_down(struct PriorityQueue *pq, int index)
+void heapify_down(struct PriorityQueue *pq)
 {
     /*
      - The children of a node at index `i` are at indices `2 * i + 1` and `2 * i + 2`.
      */
+    if(is_empty(pq)) return;
 
-     
+    int index = pq->size - 1;
+    int indexCurrent = 0;
+    
+
 }
 
 int main() {
