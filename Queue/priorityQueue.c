@@ -8,8 +8,19 @@
 struct PriorityQueue *create_pq(int capacity)
 {
     struct PriorityQueue *pq = malloc(sizeof(struct PriorityQueue));
+
+    if (!pq) return NULL;
+    
+
     pq->array = malloc(capacity * sizeof(int));
 
+    if(!pq->array) {
+        free(pq);
+        return NULL;
+    }
+
+    pq->size = 0;
+    pq->capacity = capacity;
     return pq;
 }
 
@@ -49,12 +60,48 @@ int get_max(struct PriorityQueue *pq)
     }
 }
 
-void heapify_up(struct PriorityQueue *pq, int index)
+void insert(struct PriorityQueue *pq , int value)
+{
+    if (!pq) return;
+    
+    if(is_full(pq)){
+        pq->capacity = 2*pq->capacity;
+        int* arrayAux = malloc(pq->capacity *sizeof(int));
+        for(int i = 0; i < pq->size; i++){
+            arrayAux[i] = pq->array[i];
+        }
+        arrayAux[pq->size] = value;
+        pq->size++;
+        free(pq->array);
+        pq->array = arrayAux;
+    }
+    else{
+        pq->array[pq->size] = value;
+        pq->size++;
+    }
+    printf("Inserted %d into the priority queue.\n", value);
+    heapify_up(pq);
+}
+void pop(struct PriorityQueue *pq)
+{
+    if (is_empty(pq))
+    {
+        printf("Queue is empty. Not value to pop.\n");
+        return;
+    }
+    
+    pq->array[0] = pq->array[pq->size - 1];
+    pq->size--;
+    heapify_down(pq);
+    printf("Popped the maximum element.\n");
+}
+
+void heapify_up(struct PriorityQueue *pq)
 {
     /*
      - The parent of a node at index `i` is at index `(i - 1) / 2`.
      */
-
+    int index = pq->size - 1;
     int indexCurrent = (index - 1) / 2;
     while (index > 0)
     {
