@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include <Queue/priorityQueue.h>
+#include "priorityQueue.h"
 
 
 struct PriorityQueue *create_pq(int capacity)
@@ -77,18 +77,61 @@ void heapify_down(struct PriorityQueue *pq)
 {
     /*
      - The children of a node at index `i` are at indices `2 * i + 1` and `2 * i + 2`.
-     */
+    */
+
     if(is_empty(pq)) return;
 
-    int index = pq->size - 1;
-    int indexCurrent = 0;
+    int size = pq->size;
+
+    int *arrayAux = pq ->array;
     
 
+    int indexCurrent = 0;
+
+    while (1)
+    {
+
+        int aux;
+        int leftChildIndex = 2 * indexCurrent + 1;
+        int rightChildIndex = 2 * indexCurrent + 2;
+        int max;
+        if (leftChildIndex >= size)
+        {
+            printf("\nHeapify ended\n");
+            break;
+        }
+
+        if (rightChildIndex >= size)
+        {
+            max = leftChildIndex;
+           
+        }else{
+            max = (arrayAux[leftChildIndex] > arrayAux[rightChildIndex]) ? leftChildIndex : rightChildIndex;
+        }
+        
+        if (arrayAux[indexCurrent] >= arrayAux[max])
+        {
+           printf("\nHeapify ended\n");
+            break;
+        }
+        
+        
+        aux = arrayAux[indexCurrent];
+        arrayAux[indexCurrent] = arrayAux[max];
+        arrayAux[max] = aux;
+
+        indexCurrent = max;
+        
+       
+        
+
+    }
+    
 }
 
 int main() {
     // Create a priority queue and simulate an insertion
-    int heap_array[5] = {20, 15, 10, 5, 18};
+    int heap_array[5] = {9, 15, 10, 5, 2};
     struct PriorityQueue pq = {heap_array, 5, 5};
     int new_element_index = 4; // We just inserted '18' at index 4
 
@@ -99,7 +142,7 @@ int main() {
     printf("\n");
 
     // Call the correct heapify_up function
-    heapify_up(&pq, new_element_index);
+    heapify_down(&pq);
 
     printf("Array after heapify_up: ");
     for (int i = 0; i < pq.size; i++) {
