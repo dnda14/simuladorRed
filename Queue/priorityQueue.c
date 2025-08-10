@@ -26,30 +26,12 @@ struct PriorityQueue *create_pq(int capacity)
 
 bool is_empty(struct PriorityQueue *pq)
 {
-    if (pq->size == 0)
-    {
-        printf("Priority Queue is empty.\n");
-        return 1;
-    }
-    else
-    {
-        printf("Priority Queue is not empty.\n");
-        return 0;
-    }
+    return pq->size == 0;
 }
 
 bool is_full(struct PriorityQueue *pq)
 {
-    if (pq->size == pq->capacity)
-    {
-        printf("Priority Queue is full.\n");
-        return 1;
-    }
-    else
-    {
-        printf("Queue is not full.\n");
-        return 0;
-    }
+    return pq->size == pq->capacity;
 }
 
 int get_max(struct PriorityQueue *pq)
@@ -58,27 +40,43 @@ int get_max(struct PriorityQueue *pq)
     {
         return pq->array[0];
     }
+    printf("Queue is empty\n");
+    return 0;
 }
 
+int resize(struct PriorityQueue *pq)
+{
+    if (!pq) return 0;
+
+    int newCap = pq->capacity * 2;
+    int *newArr = malloc(newCap * sizeof(int));
+    
+    if (!newArr) {
+        printf("Failed to resizing.\n");
+        return 0;
+    }
+    for (int i = 0; i < pq->size; i++)
+    {
+        newArr[i] = pq->array[i];
+    }
+    free(pq->array);
+    pq->array = newArr;
+    pq->capacity = newCap;
+    printf("Resized queue to capacity %d.\n", pq->capacity);
+    return 1;
+}
 void insert(struct PriorityQueue *pq , int value)
 {
     if (!pq) return;
     
     if(is_full(pq)){
-        pq->capacity = 2*pq->capacity;
-        int* arrayAux = malloc(pq->capacity *sizeof(int));
-        for(int i = 0; i < pq->size; i++){
-            arrayAux[i] = pq->array[i];
-        }
-        arrayAux[pq->size] = value;
-        pq->size++;
-        free(pq->array);
-        pq->array = arrayAux;
+        printf("Queue is full\n");
+        if (!resize(pq)) return;
+        
     }
-    else{
-        pq->array[pq->size] = value;
-        pq->size++;
-    }
+    pq->array[pq->size] = value;
+    pq->size++;
+
     printf("Inserted %d into the priority queue.\n", value);
     heapify_up(pq);
 }
