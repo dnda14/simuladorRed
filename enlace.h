@@ -1,9 +1,16 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "nodo.h"
+
 
 typedef struct Enlace{
     Nodo* destino;
     int ancho_banda;
-    int retardo;
+    int latencia;
     float perdida;
-    struct Enlace* siguiente;
+    float weight;
+    struct Enlace* siguiente;   
 } Enlace;
+
+Enlace* createEnlace(Nodo* destino, int anch_banda, int latencia, float perdida);

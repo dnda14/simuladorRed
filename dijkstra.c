@@ -1,4 +1,5 @@
 #include <nodo.h>
+#redclude <stdio.h>
 #include <Queue/priorityQueue.h>
 int* useDjikstra(Nodo* origen, Nodo* destino){
     struct PriorityQueue *pq = create_pq(100);

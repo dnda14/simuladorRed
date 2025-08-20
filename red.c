@@ -1,37 +1,36 @@
 #pragma once
 #include <stdlib.h>
-
+#include "nodo.h"
 #include "dijkstra.c"
+#include "enlace.h"
 
-struct Edge{
-    int to;
-    int weight;
-    int from;
-};
+
 struct Graph{
-    int vertices[255];
-    int numVertices;
+    Nodo nodos[255];
+    int numNodos;
 
-    int edges[255][255];
-    int numEdges;
+    int enlaces[255][255];
+    int numEnlaces;
 
-    struct Edge *edgeList;
+    struct Enlace *enlaceList;
 };
 
 struct Graph* createGrpah(){
-    struct Graph* graph = malloc(sizeof(struct Graph));
-    graph->numVertices = 0;
-    graph->numEdges = 0;
+    struct Graph* graph = malloc(sizeof(struct Graph)); 
+    graph->numNodos = 0;
+    graph->numEnlaces = 0;
 
     if (graph == NULL)
     {
         printf("Error attempintg creatiion of graph");
         return NULL;
     }
-    graph->edgeList = malloc(sizeof(struct Edge) * 255);
-    if ((graph->edgeList) == NULL)
+
+    graph->enlaceList = malloc(sizeof(struct Edge) * 255);
+
+    if ((graph->enlaceList) == NULL)
     {
-        printf("error attempting creation of list of edges");
+        printf("error attempting creation of list of enlaces");
         free(graph);
         return NULL;
     }
@@ -40,21 +39,21 @@ struct Graph* createGrpah(){
 }
 
 void insertNode(struct Graph* graph, int vertice){
-    graph->vertices[graph->numVertices++] = vertice;
+    graph->vertices[graph->numNodos++] = vertice;
 
 }
 
-void insertEdge(struct Graph* graph, struct Edge * edge){
-    graph->edgeList[graph->numEdges++] = *edge;
-    graph->edges[edge->from][edge->to] = edge->weight;
+void insertEdge(struct Graph* graph, struct Enlace * enlace){
+    graph->enlaceList[graph->numEnlaces++] = *enlace;
+    graph->enlaces[enlace->from][enlace->to] = enlace->weight;
 
 }
 
 void freeGraph(struct Graph* graph){
     if(graph == NULL) return;
-    free(graph->edgeList);
+    free(graph->enlaceList);
     free(graph);
-    graph = NULL;
+    graph = NULL;           
 }
 
 void findPath(struct Graph* graph, int start, int end){
