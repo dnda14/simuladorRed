@@ -1,7 +1,7 @@
 #include <nodo.h>
 #include <Queue/priorityQueue.h>
-void calcular_ruta(Nodo* origen, Nodo* destino){
-
+int* useDjikstra(Nodo* origen, Nodo* destino){
+    struct PriorityQueue *pq = create_pq(100);
     
     
      
