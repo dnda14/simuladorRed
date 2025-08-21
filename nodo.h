@@ -1,5 +1,5 @@
 #pragma once
-#include <stdlib.h>
+#include <stdlib.h>q
 
 typedef struct Nodo
 {
