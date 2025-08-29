@@ -3,10 +3,27 @@
 #include <string.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <time.h>
 
 #define PORT 8080
 #define MAX_RETRIES 5
 #define RETRY_DELAY 3 
+char* get_current_time() {
+    static char buffer[20]; // YYYY-MM-DD HH:MM:SS
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+
+    // Guardar en formato legible
+    snprintf(buffer, sizeof(buffer), "%04d-%02d-%02d %02d:%02d:%02d",
+             t->tm_year + 1900,
+             t->tm_mon + 1,
+             t->tm_mday,
+             t->tm_hour,
+             t->tm_min,
+             t->tm_sec);
+
+    return buffer;
+}
 
 int connect_to_server(int *sock) {
     FILE *log = fopen("client.log", "a");
