@@ -1,42 +1,26 @@
 #include "red.h"
 
-
-
-struct Graph* createGrpah(){
-    struct Graph* graph = malloc(sizeof(struct Graph)); 
-    graph->numNodos = 0;
-    graph->numEnlaces = 0;
-
-    if (graph == NULL)
+struct Red* createRed(){
+    struct Red* red = malloc(sizeof(struct Red)); 
+    
+    if (red == NULL)
     {
-        printf("Error attempintg creatiion of graph");
+        printf("Error attempintg creatiion of red");
         return NULL;
     }
-    for (int i = 0; i < 255; i++) {
-        graph->nodos[i] = NULL;
-    }
-    
-    return graph;
-}
+    red->grafo = crearGrafo();
 
-void insertNode(struct Graph* graph, Nodo* nodo){
-    graph->nodos[graph->numNodos++] = nodo;
-
+    return red;
 }
 
 
-void freeGraph(struct Graph* graph){
-    if(graph == NULL) return;
-    free(graph);
-    graph = NULL;           
-}
 
-void findPath(struct Graph* graph, int start, int end){
-    if(graph ==NULL){
-        pritf("graph is null");
+void findPath(struct Red* red, int start, int end){
+    if(red ==NULL){
+        pritf("red is null");
         return;
     }
     Nodo *ruta;
-    ruta = useDijkstra(graph, start, end);
+    ruta = useDijkstra(red, start, end);
     printf("Finding path from %d to %d\n", start, end);
 }

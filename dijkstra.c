@@ -1,7 +1,7 @@
-#include <nodo.h>
+#include "red.h"
 #include <stdio.h>
 #include <Queue/priorityQueue.h>
-Nodo* useDjikstra(Nodo* origen, Nodo* destino){
+Nodo* useDjikstra(Nodo* origen, Nodo* destino, Graph* graph){
     struct PriorityQueue *pq = create_pq(255);
     
     
