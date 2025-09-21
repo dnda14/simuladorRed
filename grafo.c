@@ -30,7 +30,7 @@ void freeGraph(struct Red* red){
 
 void findPath(struct Red* red, int start, int end){
     if(red ==NULL){
-        pritf("red is null");
+        printf("red is null");
         return;
     }
     Nodo *ruta;

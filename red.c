@@ -16,11 +16,5 @@ struct Red* createRed(){
 
 
 void findPath(struct Red* red, int start, int end){
-    if(red ==NULL){
-        pritf("red is null");
-        return;
-    }
-    Nodo *ruta;
-    ruta = useDijkstra(red, start, end);
-    printf("Finding path from %d to %d\n", start, end);
+    findPath(red->grafo, start, end);
 }
