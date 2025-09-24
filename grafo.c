@@ -2,14 +2,16 @@
 
 Grafo* crearGrafo(){
     struct Grafo* grafo = malloc(sizeof(struct Grafo)); 
-    grafo->numNodos = 0;
-    grafo->numEnlaces = 0;
-
+    
     if (grafo == NULL)
     {
         printf("Error attempintg creatiion of red");
         return NULL;
     }
+
+    grafo->numNodos = 0;
+    grafo->numEnlaces = 0;
+
     for (int i = 0; i < 255; i++) {
         grafo->nodos[i] = NULL;
     }
@@ -18,14 +20,32 @@ Grafo* crearGrafo(){
 }
 
 void insertNode(struct Grafo* grafo, Nodo* nodo){
+    if (grafo == NULL || nodo == NULL) {
+        printf("Grafo o nodo es NULL\n");
+        return;
+    }
+    
+    if (grafo->numNodos >= 255) {
+        printf("Grafo lleno\n");
+        return;
+    }
+
     grafo->nodos[grafo->numNodos++] = nodo;
+
 }
 
 
-void freeGraph(struct Red* red){
-    if(red == NULL) return;
-    free(red);
-    red = NULL;           
+void freeGrafo(struct Grafo* grafo){
+    if(grafo == NULL) return;
+
+    for(int i = 0; i < grafo->numNodos; i++){
+        if(grafo->nodos[i] != NULL){
+            free(grafo->nodos[i]);
+        }
+    }
+
+    free(grafo);
+    grafo = NULL;           
 }
 
 void findPath(struct Red* red, int start, int end){
