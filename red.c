@@ -32,7 +32,7 @@ void findPath(struct Red* red, int start, int end){
 
 void freeRed(struct Red* red){
     if(red == NULL) return;
-    
+        
     if(red->grafo != NULL) {
         freeGrafo(red->grafo);
     }

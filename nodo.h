@@ -4,6 +4,6 @@
 typedef struct Nodo
 {
     int id; 
-    char nombre[50];
+    char* nombre;
     struct Enlace* enlaces;
 }Nodo;

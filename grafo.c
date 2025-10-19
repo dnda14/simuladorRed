@@ -1,4 +1,6 @@
 #include "red.h"
+#include "loadValores.c"
+
 
 Grafo* crearGrafo(){
     struct Grafo* grafo = malloc(sizeof(struct Grafo)); 
@@ -34,6 +36,9 @@ void insertNode(struct Grafo* grafo, Nodo* nodo){
 
 }
 
+void loadNodos(){
+    
+}
 
 void freeGrafo(struct Grafo* grafo){
     if(grafo == NULL) return;
