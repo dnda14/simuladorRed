@@ -1,31 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "uthash.h"
+#include "hash.h"
     
-typedef struct {
-    char* key;
-    int value;
-    UT_hash_handle hh;
-} Par;
-
 Par* tabla = NULL;
 
-
-void add_update(const char* key, int value){
-    Par* p;
-    HASH_FIND_STR(tabla,key,p);
-    if (p == NULL)
+void add_or_update(const char* key, int value){
+    Par* par;
+    HASH_FIND_STR(tabla,key,par);
+    if (par == NULL)
     {
-        p = (Par*)malloc(sizeof(Par));
-        p->key = strdup(key);
-        p->value = value;
-        HASH_ADD_STR(tabla,key,p);
-        printf("added: %s -- %d\n", p->key, p->value);
+        par = (Par*)malloc(sizeof(Par));
+        par->key = strdup(key);
+        par->value = value;
+        HASH_ADD_STR(tabla,key,par);
+        printf("added: %s -- %d\n", par->key, par->value);
     } else{
-        p->value = value;
-        printf("upted: %s -- %d\n", p->key, p->value);
+        par->value = value;
+        printf("upted: %s -- %d\n", par->key, par->value);
     }
     
+}
+
+void add_or_increment(const char* key){
+    int value = 1;
+    Par* par;
+    HASH_FIND_STR(tabla,key,par);
+    if(par){
+        par->value ++;
+    }else{
+        par = (Par*)malloc(sizeof(Par));
+        par->key = strdup(key);
+        par->value = value;
+        HASH_ADD_STR(tabla,key,par);
+        printf("added: %s -- %d\n", par->key, par->value);
+    }
 }
 
 Par* search(const char* key){
@@ -62,14 +70,14 @@ void deleteAll(){
     }
 }
 
-int main(){
+/* int main(){
     add_update("nodo A", 1);
     add_update("nodo B", 1);
     add_update("nodo C", 1);
     show();
     add_update("nodo A", 3);
     show();
-}
+} */
 
 
 

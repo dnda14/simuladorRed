@@ -6,6 +6,7 @@
 #include "enlace.h"
 
 #include "cJSON.h"
+#include "hash.h"
 
 
 char* readFile(const char* filename){
@@ -25,7 +26,7 @@ char* readFile(const char* filename){
 
     return data;
 }
-    
+
 
 Nodo* loadValores(const char *filename){
     char* dataJson = readFile(filename);
@@ -58,6 +59,7 @@ Nodo* loadValores(const char *filename){
     int j = 0;
     cJSON_ArrayForEach(enlaceJson, enlacesJson){
         cJSON* origenJson = cJSON_GetObjectItemCaseSensitive(enlaceJson,"origen");
+        add_or_increment(origenJson->valuestring);
         cJSON* destinoJson = cJSON_GetObjectItemCaseSensitive(enlaceJson, "destino");
         cJSON* tipoJson = cJSON_GetObjectItemCaseSensitive(enlaceJson, "tipo");
         cJSON* anchoBandaJson = cJSON_GetObjectItemCaseSensitive(enlaceJson, "anchoBanda");
@@ -80,13 +82,7 @@ Nodo* loadValores(const char *filename){
         j++;        
 
     }
-
-
-
-
-
-
-
+    
 
     Grafo* grafo = malloc(sizeof(Grafo));
 
