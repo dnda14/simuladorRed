@@ -1,5 +1,4 @@
 #include "red.h"
-#include "loadValores.c"
 
 
 Grafo* crearGrafo(){

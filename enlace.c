@@ -1,7 +1,7 @@
 #include "enlace.h"
 
-Enlace* createEnlace(Nodo* nodo, int ancho_banda, int latencia, float perdida) {
-    if(nodo== NULL) return NULL;
+Enlace* createEnlace(char* origen, char* destino, char* tipo, float ancho_banda, float latencia, float perdida) {
+    if(destino== NULL && origen == NULL) return NULL;
 
     Enlace* enlace = malloc(sizeof( Enlace));
 
@@ -10,12 +10,14 @@ Enlace* createEnlace(Nodo* nodo, int ancho_banda, int latencia, float perdida) {
         return NULL;
     }
 
-    enlace->destino = nodo;
+    enlace->origen = origen;
+    enlace->destino = destino;
+    enlace->tipo = tipo;
     enlace->ancho_banda = ancho_banda;
+    
     enlace->latencia = latencia;
     enlace->perdida = perdida;
     enlace->weight = 0.34*latencia + 0.33*perdida + 0.33* (1/ancho_banda);
 
-    enlace->siguiente = NULL;
 
 }

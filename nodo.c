@@ -1,4 +1,5 @@
 #include "nodo.h"
+#include "enlace.h"
 
 
 Nodo* createNodo(int id,char nombre[50]){
@@ -14,4 +15,13 @@ Nodo* createNodo(int id,char nombre[50]){
     nodo->nombre[sizeof(nodo->nombre) - 1] = '\0';
     return nodo;
 
+}
+
+void addEnlace(Nodo* nodo, Enlace* enlace){
+    if (!nodo)
+    {
+        printf("nodo does not exit \n");
+    }
+        
+    
 }

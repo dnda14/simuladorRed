@@ -1,4 +1,5 @@
 #include "red.h"
+#include "loadValores.c"
 
 struct Red* createRed(){
     struct Red* red = malloc(sizeof(struct Red)); 
@@ -8,7 +9,7 @@ struct Red* createRed(){
         printf("Error attempintg creatiion of red");
         return NULL;
     }
-    red->grafo = crearGrafo();
+    red->grafo = loadValores("topologia.json");
 
     return red;
 }

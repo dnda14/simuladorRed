@@ -5,12 +5,13 @@
 
 
 typedef struct Enlace{
-    Nodo* destino;
-    int ancho_banda;
+    char* origen;
+    char* destino;
+    char* tipo;
+    float ancho_banda;
     int latencia;
     float perdida;
     float weight;
-    struct Enlace* siguiente;   
 } Enlace;
 
-Enlace* createEnlace(Nodo* destino, int anch_banda, int latencia, float perdida);
+Enlace* createEnlace(char* origen, char* destino,char* tipo, float ancho_banda, float latencia, float perdida);
